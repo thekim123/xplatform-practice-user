@@ -3,6 +3,8 @@ target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
+**/src/main/webapp/WEB-INF/lib/*
+
 
 ### STS ###
 .apt_generated
