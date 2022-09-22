@@ -1,4 +1,4 @@
-package com.thekim12.practicexp.xplatformpracticeuser;
+package com.thekim12.practicexp.xplatformpracticeuser.model;
 
 
 import com.tobesoft.xplatform.data.DataSet;
