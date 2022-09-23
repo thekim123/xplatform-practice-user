@@ -26,8 +26,8 @@ public class UserApiController {
     }
 
     @PostMapping("/join")
-    public void joinProc(@RequestBody User user){
-        User userEntity = user.toEntity();
+    public void joinProc(HttpServletRequest request, HttpServletResponse response) throws PlatformException{
+    	userService.saveUser(request, response);
     }
     
     @PutMapping("/update")

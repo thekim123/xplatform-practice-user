@@ -13,6 +13,8 @@ import org.springframework.stereotype.Service;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.transaction.Transactional;
+
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -55,11 +57,13 @@ public class UserService {
 	}
 
 	@Transactional
-	public void joinUser(HttpServletRequest request) throws PlatformException {
-		PlatformData platformData = new PlatformData();
+	public void saveUser(HttpServletRequest request, HttpServletResponse response) throws PlatformException {
 		HttpPlatformRequest pReq = new HttpPlatformRequest(request);
 		pReq.receiveData();
 		PlatformData i_xpData = pReq.getData();
+		
+		int nErrorCode = 0;
+		String strErrorMsg = "START";
 
 		VariableList in_vl = i_xpData.getVariableList();
 		String in_var2 = in_vl.getString("sVal1");
@@ -69,11 +73,31 @@ public class UserService {
 			int rowType = dataSet.getRowType(i);
 			if(rowType == DataSet.ROW_TYPE_INSERTED) {
 				User user = new User();
-				user.builder();
+
+				user.builder()
+				.deptId(dataSet.getString(i, "DEPT_ID"))
+				.emplId(dataSet.getString(i, "EMPL_ID"))
+				.fullname(dataSet.getString(i, "FULL_NAME"))
+				.gender(dataSet.getString(i, "GENDER"))
+				.hireDate(dataSet.getString(i, "HIRE_DATE"))
+				.married(dataSet.getString(i, "MARRIED"))
+				.memo(dataSet.getString(i, "EMPL_MEMO"))
+				.salary(new BigDecimal(dataSet.getString(i, "SALARY")))
+				.build();
 				
 				userRepository.save(user);
 			}
 		}
+		
+		PlatformData responsePlatformData = new PlatformData();
+		VariableList varList =  responsePlatformData.getVariableList();
+		varList.add("ErrorCode", nErrorCode);
+		varList.add("ErrorMsg", strErrorMsg);
+		varList.add("out_var", in_var2);
+		
+		HttpPlatformResponse pRes = new HttpPlatformResponse(response, PlatformType.CONTENT_TYPE_XML, "UTF-8");
+		pRes.setData(responsePlatformData);
+		pRes.sendData();
 
 	}
 	
@@ -96,7 +120,7 @@ public class UserService {
 
 	@Transactional
 	public void updateUser(User user) {
-	
+		
 	}
 
 	public DataSet createUserDataSet(DataSet dataSet) {
